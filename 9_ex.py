@@ -1,7 +1,8 @@
 '''
 TODO:
-В строке задается множество натуральных чисел, разделенных пробелом.
-Получите список всех подмножеств для заданного множества.
+В первой строке задается множество натуральных чисел, разделенных пробелом.
+Их количество N. Во второй строке вводится натуральное число K (K≤N).
+Получите список всех K-элементных подмножеств для заданного множества.
 '''
 import sys
 
@@ -54,22 +55,28 @@ def generate_subsets(nums: set) -> list:
     return result
 
 
-def main():
-    # Получаем множество чисел от пользователя
-    numbers = in_numb()
+from itertools import combinations
 
-    print(f"Исходное множество: {numbers}")
 
-    # Генерируем все подмножества
-    subsets = generate_subsets(numbers)
+def get_k_subsets():
+    # Ввод данных
+    numbers = set(map(int, input("Введите множество чисел: ").split()))
+    k = int(input("Введите K: "))
 
-    print(f"\nВсе подмножества (всего {len(subsets)}):")
-    for subset in subsets:
-        if subset:  # Если подмножество не пустое
-            print(sorted(list(*subset)))
-        else:  # Пустое множество
-            print("∅")  # или можно вывести "[]"
+    # Проверка
+    if k > len(numbers):
+        print(f"Ошибка: K ({k}) больше количества элементов ({len(numbers)})")
+        return
+
+    # Генерация всех K-элементных подмножеств
+    numbers_list = sorted(list(numbers))
+    subsets = [set(combo) for combo in combinations(numbers_list, k)]
+
+    # Вывод результата
+    print(f"\nВсе {k}-элементные подмножества:")
+    for i, subset in enumerate(subsets, 1):
+        print(f"{i}: {sorted(list(*subset))}")
 
 
 if __name__ == "__main__":
-    main()
+    get_k_subsets()
