@@ -1,75 +1,113 @@
 '''
-TODO:
-В строке задается множество натуральных чисел, разделенных пробелом.
-Получите список всех подмножеств для заданного множества.
+Program to generate all subsets (power set) of a given set of natural numbers.
+
+The program reads a space-separated string of natural numbers,
+then generates and displays all possible subsets of the input set.
 '''
+
 import sys
 
 
 def in_numb() -> set:
     '''
-    Function for taking int number from console
-    :return:
-    numb
+    Read and parse a set of natural numbers from user input.
+
+    Prompts the user to enter space-separated natural numbers,
+    converts them to integers, and returns them as a set.
+    If input cannot be parsed as integers, prints an error message
+    and exits the program.
+
+    Returns:
+        set: A set of natural numbers parsed from user input.
+
+    Raises:
+        SystemExit: If input cannot be parsed as valid integers.
     '''
     try:
-        numb = map(int, input('Enter set of natural number ->').split())
-        return set(numb)
+        numbers = map(int, input('Enter a set of natural numbers separated by spaces: ').split())
+        return set(numbers)
     except ValueError as e:
         print(f'Error - {e}. Program finished.')
         sys.exit(1)
 
 
-def generate_subsets(nums: set) -> list:
+def generate_subsets(numbers: set) -> list:
     '''
-    Generate all subsets using recursion
-    :param nums: input set of numbers
-    :return: list of all subsets (each subset is a set)
+    Generate all subsets (power set) of the input set using recursion.
+
+    This function implements a recursive backtracking algorithm to generate
+    all possible subsets of the input set. The resulting list contains each
+    subset as a Python set object.
+
+    Args:
+        numbers: Input set of numbers for which to generate subsets.
+
+    Returns:
+        list: A list containing all subsets of the input set.
+              Each subset is represented as a set.
     '''
-    # Преобразуем множество в список для удобства индексации
-    nums_list = sorted(list(nums))
+    # Convert set to sorted list for consistent indexing
+    # Sorting ensures subsets are generated in a predictable order
+    numbers_list = sorted(list(numbers))
     result = []
 
     def recursive_subsets(current_subset: set, index: int):
         '''
-        Recursive helper function
-        :param current_subset: current subset being built
-        :param index: current index in nums_list
+        Recursive helper function to build subsets.
+
+        Uses backtracking to explore all possible combinations of elements
+        starting from the given index.
+
+        Args:
+            current_subset: The subset being built in the current recursion branch
+            index: The starting index in numbers_list to consider for adding elements
         '''
-        # Добавляем текущее подмножество в результат
-        # Используем frozenset для хранения, но для вывода преобразуем в set
+        # Add the current subset to the result
+        # We create a new set copy to avoid later modifications
         result.append(set(current_subset))
 
-        # Проходим по оставшимся элементам
-        for i in range(index, len(nums_list)):
-            # Добавляем текущий элемент в подмножество
-            current_subset.add(nums_list[i])
-            # Рекурсивно генерируем подмножества с этим элементом
-            recursive_subsets(current_subset, i + 1)
-            # Убираем элемент (backtracking)
-            current_subset.remove(nums_list[i])
+        # Iterate through remaining elements starting from current index
+        for i in range(index, len(numbers_list)):
+            # Add current element to the subset
+            current_subset.add(numbers_list[i])
 
-    # Начинаем с пустого множества и индекса 0
+            # Recursively generate subsets that include this element
+            recursive_subsets(current_subset, i + 1)
+
+            # Remove the element (backtracking) to try other combinations
+            current_subset.remove(numbers_list[i])
+
+    # Start recursion with empty set and index 0
     recursive_subsets(set(), 0)
+
     return result
 
 
-def main():
-    # Получаем множество чисел от пользователя
+def main() -> None:
+    '''
+    Main program execution.
+
+    Reads a set of numbers from user input, generates all possible subsets
+    (power set), and displays them along with the total count.
+    '''
+    # Get input set from user
     numbers = in_numb()
 
-    print(f"Исходное множество: {numbers}")
+    print(f'Original set: {numbers}')
 
-    # Генерируем все подмножества
+    # Generate all subsets
     subsets = generate_subsets(numbers)
 
-    print(f"\nВсе подмножества (всего {len(subsets)}):")
+    print(f'\nAll subsets (total {len(subsets)}):')
+
+    # Display each subset
     for subset in subsets:
-        if subset:  # Если подмножество не пустое
-            print(sorted(list(*subset)))
-        else:  # Пустое множество
-            print("∅")  # или можно вывести "[]"
+        if subset:  # Non-empty subset
+            # Sort elements for consistent display
+            print(sorted(subset))
+        else:  # Empty set
+            print('∅')  # Empty set symbol
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
